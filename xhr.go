@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/dchest/uniuri"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -18,7 +19,7 @@ type XHR struct {
 	TransportAddress string
 	ServerID         string
 	SessionID        string
-	Inbound          chan []body
+	Inbound          chan []byte
 }
 
 func paddedRandomIntn(max int) string {
@@ -29,7 +30,7 @@ func paddedRandomIntn(max int) string {
 	)
 
 	if len(is) < ml {
-		is = strings.Repeat("0", ml-is) + is
+		is = strings.Repeat("0", ml-len(is)) + is
 	}
 
 	return is
@@ -45,11 +46,9 @@ func NewXHR(address string) (*XHR, error) {
 	if err := xhr.Init(); err != nil {
 		return nil, err
 	}
-	if err := xhr.StartReading(); err != nil {
-		return nil, err
-	}
+	xhr.StartReading()
 
-	return xhr
+	return xhr, nil
 }
 
 func (x *XHR) Init() error {
@@ -81,7 +80,6 @@ func (x *XHR) StartReading() {
 		client := &http.Client{
 			Timeout: time.Minute,
 		}
-
 		for {
 			req, err := http.NewRequest("POST", x.TransportAddress+"/xhr", nil)
 			if err != nil {
@@ -148,5 +146,10 @@ func (x *XHR) WriteJSON(v interface{}) error {
 		return errors.New("Invalid HTTP code - " + resp.Status)
 	}
 
+	return nil
+}
+
+func (x *XHR) Close() error {
+	// Unimplemented
 	return nil
 }

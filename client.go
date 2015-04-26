@@ -9,7 +9,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/dchest/uniuri"
 	"github.com/gorilla/websocket"
 )
 
@@ -70,7 +69,7 @@ func NewClient(address string, readBufSize, writeBufSize int) (*Client, error) {
 				return nil, err
 			}
 		} else {
-			conn, err = tls.Dial("tcp", host+":"+port)
+			conn, err = net.Dial("tcp", host+":"+port)
 			if err != nil {
 				return nil, err
 			}
@@ -89,10 +88,13 @@ func NewClient(address string, readBufSize, writeBufSize int) (*Client, error) {
 		client.Connection = ws
 	} else {
 		// XHR
-		client.Connection = NewXHR(address)
+		client.Connection, err = NewXHR(address)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return client
+	return client, nil
 }
 
 func (c *Client) Info() (*Info, error) {
@@ -108,13 +110,13 @@ func (c *Client) Info() (*Info, error) {
 		return nil, err
 	}
 
-	return info
+	return info, nil
 }
 
 func (c *Client) WriteMessage(p interface{}) error {
-
+	return c.Connection.WriteJSON(p)
 }
 
 func (c *Client) ReadMessage(p interface{}) error {
-
+	return c.Connection.ReadJSON(p)
 }
