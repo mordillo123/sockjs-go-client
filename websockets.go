@@ -60,7 +60,7 @@ func (w *WebSocket) Init() error {
 func (w *WebSocket) StartReading() {
 	go func() {
 		for {
-			id, data, err := w.Connection.ReadMessage()
+			_, data, err := w.Connection.ReadMessage()
 			if err != nil {
 				log.Print(err)
 				return
@@ -96,10 +96,6 @@ func (w *WebSocket) ReadJSON(v interface{}) error {
 }
 
 func (w *WebSocket) WriteJSON(v interface{}) error {
-	x, e := json.Marshal(&v)
-	if e != nil {
-		return e
-	}
 	return w.Connection.WriteJSON(v)
 }
 
