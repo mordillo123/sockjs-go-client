@@ -7,10 +7,7 @@ import (
 	"github.com/dchest/uniuri"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -20,20 +17,6 @@ type XHR struct {
 	ServerID         string
 	SessionID        string
 	Inbound          chan []byte
-}
-
-func paddedRandomIntn(max int) string {
-	var (
-		ml = len(strconv.Itoa(max))
-		ri = rand.Intn(max)
-		is = strconv.Itoa(ri)
-	)
-
-	if len(is) < ml {
-		is = strings.Repeat("0", ml-len(is)) + is
-	}
-
-	return is
 }
 
 func NewXHR(address string) (*XHR, error) {
