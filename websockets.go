@@ -23,6 +23,7 @@ func NewWebSocket(address string) (*WebSocket, error) {
 		Address:   address,
 		ServerID:  paddedRandomIntn(999),
 		SessionID: uniuri.New(),
+		Inbound:   make(chan []byte),
 	}
 
 	ws.TransportAddress = address + "/" + ws.ServerID + "/" + ws.SessionID + "/websocket"
