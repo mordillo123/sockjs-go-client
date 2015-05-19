@@ -39,8 +39,6 @@ func NewWebSocket(address string) (*WebSocket, error) {
 }
 
 func (w *WebSocket) Loop() {
-	firstConnect := true
-
 	go func() {
 		err := backoff.Retry(func() error {
 			log.Printf("Starting a WebSocket connection to %s", w.TransportAddress)
@@ -62,11 +60,7 @@ func (w *WebSocket) Loop() {
 
 			w.Connection = ws
 
-			if !firstConnect {
-				w.Reconnected <- struct{}{}
-			} else {
-				firstConnect = false
-			}
+			w.Reconnected <- struct{}{}
 
 			for {
 				_, data, err := w.Connection.ReadMessage()
@@ -102,6 +96,8 @@ func (w *WebSocket) Loop() {
 			log.Print(err)
 		}
 	}()
+
+	<-w.Reconnected
 }
 
 func (w *WebSocket) ReadJSON(v interface{}) error {
