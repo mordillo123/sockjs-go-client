@@ -13,6 +13,8 @@ type Client struct {
 	Address      string
 	ReadBufSize  int
 	WriteBufSize int
+
+	Reconnected chan struct{}
 }
 
 func NewClient(address string) (*Client, error) {
@@ -32,10 +34,13 @@ func NewClient(address string) (*Client, error) {
 		a2 := strings.Replace(address, "https", "wss", 1)
 		a2 = strings.Replace(a2, "http", "ws", 1)
 
-		client.Connection, err = NewWebSocket(a2)
+		ws, err := NewWebSocket(a2)
 		if err != nil {
 			return nil, err
 		}
+
+		client.Connection = ws
+		client.Reconnected = ws.Reconnected
 	} else {
 		// XHR
 		client.Connection, err = NewXHR(address)
