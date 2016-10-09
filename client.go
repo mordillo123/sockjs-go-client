@@ -76,6 +76,14 @@ func (c *Client) ReadMessage(p interface{}) error {
 	return c.Connection.ReadJSON(p)
 }
 
+func (c *Client) Read([]byte) (int, error) {
+	return 0, nil
+}
+
+func (c *Client) Write([]byte) (int, error) {
+	return 0, nil
+}
+
 func (c *Client) Close() error {
 	return c.Connection.Close()
 }
