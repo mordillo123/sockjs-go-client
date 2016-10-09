@@ -75,3 +75,7 @@ func (c *Client) WriteMessage(p interface{}) error {
 func (c *Client) ReadMessage(p interface{}) error {
 	return c.Connection.ReadJSON(p)
 }
+
+func (c *Client) Close() error {
+	return c.Connection.Close()
+}
