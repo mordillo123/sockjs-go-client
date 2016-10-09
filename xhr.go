@@ -2,7 +2,6 @@ package sockjs
 
 import (
 	"bytes"
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -110,10 +109,8 @@ func (x *XHR) ReadJSON(v interface{}) error {
 	return json.Unmarshal(message, v)
 }
 
-func (x *XHR) Read(v interface{}) error {
-	message := <-x.Inbound
-	buf := bytes.NewReader(message)
-	return binary.Read(buf, binary.LittleEndian, v)
+func (x *XHR) Read([]byte) (int, error) {
+	return 0, nil
 }
 
 func (x *XHR) WriteJSON(v interface{}) error {
@@ -140,9 +137,8 @@ func (x *XHR) WriteJSON(v interface{}) error {
 	return nil
 }
 
-func (x *XHR) Write(v interface{}) error {
-	// Uninplemented
-	return nil
+func (x *XHR) Write([]byte) (int, error) {
+	return 0, nil
 }
 
 func (x *XHR) Close() error {

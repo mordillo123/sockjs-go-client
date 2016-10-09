@@ -1,8 +1,6 @@
 package sockjs
 
 import (
-	"bytes"
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"log"
@@ -112,14 +110,12 @@ func (w *WebSocket) WriteJSON(v interface{}) error {
 	return w.Connection.WriteJSON(v)
 }
 
-func (w *WebSocket) Read(v interface{}) error {
-	message := <-w.Inbound
-	buf := bytes.NewReader(message)
-	return binary.Read(buf, binary.LittleEndian, v)
+func (w *WebSocket) Read([]byte) (int, error) {
+	return 0, nil
 }
 
-func (w *WebSocket) Write(v interface{}) error {
-	return w.Write(v)
+func (w *WebSocket) Write([]byte) (int, error) {
+	return 0, nil
 }
 
 func (w *WebSocket) Close() error {
