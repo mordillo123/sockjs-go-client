@@ -1,14 +1,17 @@
 package sockjs
 
 import (
+	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
-	"github.com/cenkalti/backoff"
-	"github.com/dchest/uniuri"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"sync"
+
+	"github.com/cenkalti/backoff"
+	"github.com/dchest/uniuri"
+	"github.com/gorilla/websocket"
 )
 
 type WebSocket struct {
@@ -107,6 +110,16 @@ func (w *WebSocket) ReadJSON(v interface{}) error {
 
 func (w *WebSocket) WriteJSON(v interface{}) error {
 	return w.Connection.WriteJSON(v)
+}
+
+func (w *WebSocket) Read(v interface{}) error {
+	message := <-w.Inbound
+	buf := bytes.NewReader(message)
+	return binary.Read(buf, binary.LittleEndian, v)
+}
+
+func (w *WebSocket) Write(v interface{}) error {
+	return w.Write(v)
 }
 
 func (w *WebSocket) Close() error {
